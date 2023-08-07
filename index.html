@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooling Load Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cooling Load Calculator</h2>
+        <div class="input-group">
+            <label for="area">Area of the building (in square meters):</label>
+            <input type="number" id="area" min="0" step="1" required>
+        </div>
+        <div class="input-group">
+            <label for="numOccupants">Number of Occupants:</label>
+            <input type="number" id="numOccupants" min="0" step="1" required>
+        </div>
+        <div class="input-group">
+            <label for="buildingType">Type of Building:</label>
+            <input type="text" id="buildingType" required>
+        </div>
+        <div class="input-group">
+            <label for="outdoorTemp">Outdoor Temperature (in Celsius):</label>
+            <input type="number" id="outdoorTemp" required>
+        </div>
+        <div class="input-group">
+            <label for="indoorTemp">Indoor Desired Temperature (in Celsius):</label>
+            <input type="number" id="indoorTemp" required>
+        </div>
+        <button class="btn" onclick="calculateCoolingLoad()">Calculate</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function calculateCoolingLoad() {
+            const area = parseFloat(document.getElementById('area').value);
+            const numOccupants = parseFloat(document.getElementById('numOccupants').value);
+            const buildingType = document.getElementById('buildingType').value;
+            const outdoorTemp = parseFloat(document.getElementById('outdoorTemp').value);
+            const indoorTemp = parseFloat(document.getElementById('indoorTemp').value);
+
+            if (isNaN(area) || isNaN(numOccupants) || buildingType.trim() === '' || isNaN(outdoorTemp) || isNaN(indoorTemp)) {
+                alert('Please fill in all the fields with valid values.');
+                return;
+            }
+
+            // Calculate the cooling load based on building type
+            let coolingLoad;
+            if (buildingType.toLowerCase() === 'residential') {
+                coolingLoad = 100 * numOccupants;
+            } else if (buildingType.toLowerCase() === 'commercial') {
+                coolingLoad = 150 * numOccupants;
+            } else {
+                alert('Invalid building type. Please enter "residential" or "commercial".');
+                return;
+            }
+
+            const overallHeatTransferCoefficient = 30; // W/m²°C
+
+            // Calculate heat transfer due to conduction
+            const qConduction = overallHeatTransferCoefficient * area * (outdoorTemp - indoorTemp);
+
+            // Calculate the sensible cooling load
+            const sensibleCoolingLoad = qConduction + coolingLoad;
+
+            // Display the result
+            document.getElementById('result').textContent = `Sensible Cooling Load: ${sensibleCoolingLoad} W`;
+        }
+    </script>
+</body>
+</html>
